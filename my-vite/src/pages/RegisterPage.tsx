@@ -3,10 +3,12 @@ import { InboxOutlined, UserOutlined, MailOutlined, PhoneOutlined, LockOutlined,
 import type { IRegisterUser } from "../types/account/IRegisterUser.ts";
 import { registerUser } from "../services/api.ts";
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 const RegisterPage = () => {
     const [form] = Form.useForm<IRegisterUser>();
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const onFinish = async (values: IRegisterUser) => {
         setLoading(true);
@@ -34,8 +36,10 @@ const RegisterPage = () => {
             message.success('Реєстрація успішна! Вітаємо!');
             console.log('Registration successful:', response);
             
-            // Очищення форми після успішної реєстрації
-            form.resetFields();
+            // Перенаправлення на сторінку входу після успішної реєстрації
+            setTimeout(() => {
+                navigate('/login');
+            }, 1500);
         } catch (error: any) {
             console.error('Registration error:', error);
             
@@ -252,7 +256,7 @@ const RegisterPage = () => {
                             </Upload.Dragger>
                         </Form.Item>
 
-                        <Form.Item className="mb-0">
+                        <Form.Item className="mb-4">
                             <Button 
                                 type="primary" 
                                 htmlType="submit" 
@@ -264,6 +268,15 @@ const RegisterPage = () => {
                                 {loading ? 'Реєстрація...' : 'Зареєструватися'}
                             </Button>
                         </Form.Item>
+
+                        <div className="text-center">
+                            <p className="text-gray-600">
+                                Вже маєте акаунт?{' '}
+                                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                                    Увійти
+                                </Link>
+                            </p>
+                        </div>
                     </Form>
                 </Card>
             </div>

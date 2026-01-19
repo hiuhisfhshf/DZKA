@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { APP_ENV } from '../env';
+import type { ILoginUser, LoginResponse } from '../types/account/ILoginUser';
+import type { IUserProfile } from '../types/account/IUserProfile';
 
 const apiClient = axios.create({
   baseURL: APP_ENV.SERVER_URL || 'http://localhost:4099/api',
@@ -7,6 +9,28 @@ const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// Додаємо токен до запитів, якщо він є
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('access_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Обробка помилок авторизації
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
 
 export interface RegisterData {
   username: string;
@@ -43,6 +67,24 @@ export const registerUser = async (data: RegisterData): Promise<RegisterResponse
     },
   });
 
+  return response.data;
+};
+
+export const loginUser = async (data: ILoginUser): Promise<LoginResponse> => {
+  const response = await apiClient.post<LoginResponse>('/users/login/', {
+    username: data.username,
+    password: data.password,
+  });
+
+  // Зберігаємо токени в localStorage
+  localStorage.setItem('access_token', response.data.access);
+  localStorage.setItem('refresh_token', response.data.refresh);
+
+  return response.data;
+};
+
+export const getUserProfile = async (): Promise<IUserProfile> => {
+  const response = await apiClient.get<IUserProfile>('/users/profile/');
   return response.data;
 };
 

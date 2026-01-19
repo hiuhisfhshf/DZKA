@@ -1,51 +1,28 @@
 import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RegisterPage from "./pages/RegisterPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
+import ProfilePage from "./pages/ProfilePage.tsx";
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 function App() {
-
-
   return (
-      <>
-          <RegisterPage />
-
-          {/*<div className="container mx-auto px-4 py-16">*/}
-          {/*    <h1 className="mb-4 text-center text-4xl font-bold tracking-tight text-heading md:text-5xl lg:text-6xl">*/}
-          {/*        Реєстрація користувача*/}
-          {/*    </h1>*/}
-
-          {/*    <div className="grid gap-6 justify-items-center ">*/}
-
-          {/*        <div className="w-full max-w-md ">*/}
-          {/*            <label className="block mb-2 text-sm text-slate-600">*/}
-          {/*                Електронна пошта*/}
-          {/*            </label>*/}
-          {/*            <input*/}
-          {/*                className="w-full bg-transparent placeholder:text-slate-400*/}
-          {/*              text-slate-700 text-sm border*/}
-          {/*              border-slate-200 rounded-md px-3 py-2 transition*/}
-          {/*              duration-300 ease focus:outline-none focus:border-slate-400*/}
-          {/*              hover:border-slate-300 shadow-sm focus:shadow"*/}
-          {/*                placeholder="Вкажіть пошту"/>*/}
-          {/*        </div>*/}
-
-          {/*        <div className="w-full max-w-md ">*/}
-          {/*            <label className="block mb-2 text-sm text-slate-600">*/}
-          {/*                Прізвище*/}
-          {/*            </label>*/}
-          {/*            <input*/}
-          {/*                className="w-full bg-transparent placeholder:text-slate-400*/}
-          {/*              text-slate-700 text-sm border*/}
-          {/*              border-slate-200 rounded-md px-3 py-2 transition*/}
-          {/*              duration-300 ease focus:outline-none focus:border-slate-400*/}
-          {/*              hover:border-slate-300 shadow-sm focus:shadow"*/}
-          {/*                placeholder="Вкажіть прізвище"/>*/}
-          {/*        </div>*/}
-          {/*    </div>*/}
-
-
-          {/*</div>*/}
-      </>
-
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
