@@ -1,0 +1,394 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="text-center">Реєстрація</h1>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="username" class="form-label">{{ form.username.label }}</label>
+                    <input type="text" 
+                           class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                           id="username" 
+                           name="username" 
+                           value="{{ form.username.value|default:'' }}"
+                           pattern="[a-zA-Z0-9_]+"
+                           minlength="3"
+                           maxlength="30"
+                           required />
+                    <div class="valid-feedback">Виглядає добре!</div>
+                    <div class="invalid-feedback">
+                        {% if form.username.errors %}
+                            {{ form.username.errors.0 }}
+                        {% else %}
+                            Логін повинен містити мінімум 3 символи (лише літери, цифри та підкреслення)
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">{{ form.email.label }}</label>
+                    <input type="email" 
+                           class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                           id="email" 
+                           name="email" 
+                           value="{{ form.email.value|default:'' }}"
+                           required />
+                    <div class="valid-feedback">Виглядає добре!</div>
+                    <div class="invalid-feedback">
+                        {% if form.email.errors %}
+                            {{ form.email.errors.0 }}
+                        {% else %}
+                            Будь ласка, введіть коректну електронну адресу
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="first_name" class="form-label">{{ form.first_name.label }}</label>
+                    <input type="text" 
+                           class="form-control {% if form.first_name.errors %}is-invalid{% endif %}" 
+                           id="first_name" 
+                           name="first_name" 
+                           value="{{ form.first_name.value|default:'' }}"
+                           pattern="[А-Яа-яA-Za-z\s]+"
+                           minlength="2"
+                           maxlength="30"
+                           required />
+                    <div class="valid-feedback">Виглядає добре!</div>
+                    <div class="invalid-feedback">
+                        {% if form.first_name.errors %}
+                            {{ form.first_name.errors.0 }}
+                        {% else %}
+                            Ім'я повинно містити мінімум 2 символи (лише літери)
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="last_name" class="form-label">{{ form.last_name.label }}</label>
+                    <input type="text" 
+                           class="form-control {% if form.last_name.errors %}is-invalid{% endif %}" 
+                           id="last_name" 
+                           name="last_name" 
+                           value="{{ form.last_name.value|default:'' }}"
+                           pattern="[А-Яа-яA-Za-z\s]+"
+                           minlength="2"
+                           maxlength="30"
+                           required />
+                    <div class="valid-feedback">Виглядає добре!</div>
+                    <div class="invalid-feedback">
+                        {% if form.last_name.errors %}
+                            {{ form.last_name.errors.0 }}
+                        {% else %}
+                            Прізвище повинно містити мінімум 2 символи (лише літери)
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="phone" class="form-label">{{ form.phone.label }}</label>
+                <input type="tel" 
+                       class="form-control {% if form.phone.errors %}is-invalid{% endif %}" 
+                       id="phone" 
+                       name="phone" 
+                       value="{{ form.phone.value|default:'' }}"
+                       pattern="[0-9+\-\s()]+"
+                       required />
+                <div class="valid-feedback">Виглядає добре!</div>
+                <div class="invalid-feedback">
+                    {% if form.phone.errors %}
+                        {{ form.phone.errors.0 }}
+                    {% else %}
+                        Будь ласка, введіть коректний номер телефону
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label" style="cursor: pointer;">
+                    <img src="/images/noimage.jpg" id="imgView" width="200" class="img-thumbnail" />
+                    <div class="mt-2">{{ form.image.label }}</div>
+                </label>
+                <input type="file" 
+                       class="form-control d-none {% if form.image.errors %}is-invalid{% endif %}" 
+                       id="image" 
+                       name="image" 
+                       accept="image/*"
+                       required />
+                <div class="invalid-feedback">
+                    {% if form.image.errors %}
+                        {{ form.image.errors.0 }}
+                    {% else %}
+                        Будь ласка, завантажте зображення
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="password1" class="form-label">{{ form.password1.label }}</label>
+                    <input type="password" 
+                           class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                           id="password1" 
+                           name="password1" 
+                           minlength="8"
+                           maxlength="128"
+                           required />
+                    <div class="form-text">
+                        Пароль повинен містити:
+                        <ul class="mb-0" style="font-size: 0.875rem;">
+                            <li id="req-length">Мінімум 8 символів</li>
+                            <li id="req-digit">Хоча б одну цифру</li>
+                            <li id="req-upper">Хоча б одну велику літеру</li>
+                            <li id="req-lower">Хоча б одну малу літеру</li>
+                            <li id="req-special">Хоча б один спеціальний символ</li>
+                        </ul>
+                    </div>
+                    <div class="progress mt-2" style="height: 5px;">
+                        <div class="progress-bar" id="password-strength" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="valid-feedback">Виглядає добре!</div>
+                    <div class="invalid-feedback">
+                        {% if form.password1.errors %}
+                            {{ form.password1.errors.0 }}
+                        {% else %}
+                            Пароль не відповідає вимогам
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="password2" class="form-label">{{ form.password2.label }}</label>
+                    <input type="password" 
+                           class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                           id="password2" 
+                           name="password2" 
+                           minlength="8"
+                           required />
+                    <div class="valid-feedback">Паролі співпадають!</div>
+                    <div class="invalid-feedback">
+                        {% if form.password2.errors %}
+                            {{ form.password2.errors.0 }}
+                        {% else %}
+                            Паролі повинні співпадати
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'users:login' %}" class="btn btn-secondary">Вже маєте акаунт? Увійти</a>
+                <button type="submit" class="btn btn-success">Зареєструватися</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Перевірка співпадіння паролів
+    const password1 = document.getElementById('password1');
+    const password2 = document.getElementById('password2');
+
+    function validatePasswordMatch() {
+        if (password2.value !== password1.value) {
+            password2.setCustomValidity('Паролі не співпадають');
+        } else {
+            password2.setCustomValidity('');
+        }
+    }
+
+    password1.addEventListener('input', validatePasswordMatch);
+    password2.addEventListener('input', validatePasswordMatch);
+
+    // Валідація сили пароля
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        const requirements = {
+            length: password.length >= 8,
+            digit: /\d/.test(password),
+            upper: /[A-ZА-Я]/.test(password),
+            lower: /[a-zа-я]/.test(password),
+            special: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+        };
+
+        // Оновлення візуальних індикаторів вимог
+        document.getElementById('req-length').style.color = requirements.length ? 'green' : 'red';
+        document.getElementById('req-digit').style.color = requirements.digit ? 'green' : 'red';
+        document.getElementById('req-upper').style.color = requirements.upper ? 'green' : 'red';
+        document.getElementById('req-lower').style.color = requirements.lower ? 'green' : 'red';
+        document.getElementById('req-special').style.color = requirements.special ? 'green' : 'red';
+
+        // Підрахунок сили пароля
+        if (requirements.length) strength += 20;
+        if (requirements.digit) strength += 20;
+        if (requirements.upper) strength += 20;
+        if (requirements.lower) strength += 20;
+        if (requirements.special) strength += 20;
+
+        // Оновлення індикатора сили
+        const strengthBar = document.getElementById('password-strength');
+        strengthBar.style.width = strength + '%';
+        
+        if (strength < 40) {
+            strengthBar.className = 'progress-bar bg-danger';
+        } else if (strength < 80) {
+            strengthBar.className = 'progress-bar bg-warning';
+        } else {
+            strengthBar.className = 'progress-bar bg-success';
+        }
+
+        // Валідація для HTML5
+        if (strength === 100) {
+            password1.setCustomValidity('');
+        } else {
+            password1.setCustomValidity('Пароль не відповідає всім вимогам');
+        }
+    }
+
+    password1.addEventListener('input', function() {
+        checkPasswordStrength(this.value);
+        validatePasswordMatch();
+    });
+
+    // Валідація телефону
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', function() {
+        const phone = this.value.replace(/\D/g, '');
+        if (phone.length > 0 && phone.length < 10) {
+            this.setCustomValidity('Номер телефону повинен містити мінімум 10 цифр');
+        } else if (phone.length > 15) {
+            this.setCustomValidity('Номер телефону занадто довгий');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Валідація email
+    const emailInput = document.getElementById('email');
+    emailInput.addEventListener('input', function() {
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (this.value && !emailPattern.test(this.value)) {
+            this.setCustomValidity('Введіть коректну електронну адресу');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Валідація імені та прізвища
+    function validateName(input) {
+        const namePattern = /^[А-Яа-яA-Za-z\s]+$/;
+        if (input.value && !namePattern.test(input.value)) {
+            input.setCustomValidity('Може містити лише літери');
+        } else if (input.value && input.value.trim().length < 2) {
+            input.setCustomValidity('Повинно містити мінімум 2 символи');
+        } else {
+            input.setCustomValidity('');
+        }
+    }
+
+    document.getElementById('first_name').addEventListener('input', function() {
+        validateName(this);
+    });
+
+    document.getElementById('last_name').addEventListener('input', function() {
+        validateName(this);
+    });
+
+    // Валідація логіну
+    const usernameInput = document.getElementById('username');
+    usernameInput.addEventListener('input', function() {
+        const usernamePattern = /^[a-zA-Z0-9_]+$/;
+        if (this.value && !usernamePattern.test(this.value)) {
+            this.setCustomValidity('Логін може містити лише літери, цифри та підкреслення');
+        } else if (this.value && this.value.length < 3) {
+            this.setCustomValidity('Логін повинен містити мінімум 3 символи');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Перевірка розміру файлу зображення
+    const imageInput = document.getElementById('image');
+    const imgView = document.getElementById('imgView');
+
+    imageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            // Перевірка розміру файлу (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                this.setCustomValidity('Розмір зображення не повинен перевищувати 5MB');
+                this.value = '';
+                imgView.src = '/images/noimage.jpg';
+                return;
+            }
+
+            // Перевірка типу файлу
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+            if (!validTypes.includes(file.type)) {
+                this.setCustomValidity('Підтримуються лише формати: JPG, JPEG, PNG, GIF, WEBP');
+                this.value = '';
+                imgView.src = '/images/noimage.jpg';
+                return;
+            }
+
+            this.setCustomValidity('');
+            
+            // Попередній перегляд зображення
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imgView.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Bootstrap валідація форми
+    (function () {
+        'use strict';
+        
+        const forms = document.querySelectorAll('.needs-validation');
+        
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+{% endblock %}
