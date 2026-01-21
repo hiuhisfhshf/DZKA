@@ -47,6 +47,56 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Користувач з таким логіном вже існує")
         return value
 
+
+class UserUpdateSerializer(serializers.ModelSerializer):
+    image = serializers.ImageField(write_only=True, required=False, allow_null=True)
+
+    class Meta:
+        model = CustomUser
+        fields = [
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+            'phone',
+            'image',
+        ]
+        extra_kwargs = {
+            'username': {'required': False},
+            'email': {'required': False},
+            'first_name': {'required': False},
+            'last_name': {'required': False},
+            'phone': {'required': False},
+        }
+
+    def validate_image(self, value):
+        if value:
+            if value.size > 5 * 1024 * 1024:
+                raise serializers.ValidationError("Розмір зображення не повинен перевищувати 5MB")
+            valid_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+            if not any(value.name.lower().endswith(ext) for ext in valid_extensions):
+                raise serializers.ValidationError("Підтримуються лише формати: JPG, JPEG, PNG, GIF, WEBP")
+        return value
+
+    def update(self, instance, validated_data):
+        image = validated_data.pop('image', None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        if image:
+            optimized, name = compress_image(image, size=(300, 300))
+            instance.image_small.save(name, optimized, save=False)
+
+            optimized, name = compress_image(image, size=(800, 800))
+            instance.image_medium.save(name, optimized, save=False)
+
+            optimized, name = compress_image(image, size=(1200, 1200))
+            instance.image_large.save(name, optimized, save=False)
+
+        instance.save()
+        return instance
+
     def validate_email(self, value):
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_pattern, value):

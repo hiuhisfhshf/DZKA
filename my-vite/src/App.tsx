@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import RegisterPage from "./pages/RegisterPage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import ProfilePage from "./pages/ProfilePage.tsx";
+import UsersCrudPage from "./pages/UsersCrudPage.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 
 function App() {
@@ -19,6 +20,14 @@ function App() {
               <ProfilePage />
             </ProtectedRoute>
           } 
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute>
+              <UsersCrudPage />
+            </ProtectedRoute>
+          }
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
