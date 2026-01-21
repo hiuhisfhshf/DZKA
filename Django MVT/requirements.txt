@@ -5,3 +5,4 @@ psycopg2-binary==2.9.11
 sqlparse==0.5.4
 tzdata==2025.2
 Unidecode==1.4.0
+django-allauth==65.4.1

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load socialaccount %}
 
 {% block content %}
 
@@ -34,10 +35,22 @@
         {% endif %}
     </div>
 
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex justify-content-between align-items-center mb-3">
         <button type="submit" class="btn" style="background-color:black; color:white;">Увійти</button>
         <a href="{% url 'users:password_reset' %}">Забули пароль?</a>
     </div>
+
+    {% if google_enabled %}
+    <div class="d-grid gap-2">
+        <a class="btn btn-outline-primary" href="{% provider_login_url 'google' process='login' %}">
+            Увійти через Google
+        </a>
+    </div>
+    {% else %}
+    <div class="alert alert-warning mt-3" role="alert">
+        Вхід через Google ще не налаштовано (немає Google Client ID/Secret).
+    </div>
+    {% endif %}
 </form>
 </div>
 </div>

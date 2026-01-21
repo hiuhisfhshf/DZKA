@@ -4,6 +4,7 @@ from .utils import compress_image
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import admin
+from django.conf import settings
 
 # Create your views here.
 def register(request):
@@ -35,6 +36,7 @@ def register(request):
     return render(request, 'register.html', {'form': form})
 
 def user_login(request):
+    google_enabled = bool(settings.SOCIALACCOUNT_PROVIDERS['google']['APP']['client_id'])
     if request.method == 'POST':
         form = CustomUserLogin(data=request.POST)
         if form.is_valid():
@@ -47,7 +49,7 @@ def user_login(request):
             messages.success(request, 'Виправте помилки в формі')
     else:
         form = CustomUserLogin()
-    return render(request, 'login.html', {'form':form})
+    return render(request, 'login.html', {'form':form, 'google_enabled': google_enabled})
 
 
 def user_logout(request):
