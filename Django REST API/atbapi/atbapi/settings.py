@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yd+4%j(nsycp)m=_kio14eo68bzsk&9s76bkww-xl_@4wn%+yk'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-yd+4%j(nsycp)m=_kio14eo68bzsk&9s76bkww-xl_@4wn%+yk')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+# Parse ALLOWED_HOSTS from environment variable
+ALLOWED_HOSTS_STR = os.getenv('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = ALLOWED_HOSTS_STR.split(',') if ALLOWED_HOSTS_STR != '*' else ['*']
 
 
 # Application definition
@@ -43,14 +46,28 @@ INSTALLED_APPS = [
     'corsheaders',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:3000',
-    'http://127.0.0.1:3000',
-    'http://localhost:4099',
-    'http://127.0.0.1:4099',
-]
+# CORS settings - allow all origins in development, specific in production
+CORS_ALLOWED_ORIGINS_STR = os.getenv('CORS_ALLOWED_ORIGINS', '')
+if CORS_ALLOWED_ORIGINS_STR:
+    CORS_ALLOWED_ORIGINS = CORS_ALLOWED_ORIGINS_STR.split(',')
+else:
+    # Default development origins
+    CORS_ALLOWED_ORIGINS = [
+        'http://localhost:5173',
+        'http://127.0.0.1:5173',
+        'http://localhost:3000',
+        'http://127.0.0.1:3000',
+        'http://localhost:4099',
+        'http://127.0.0.1:4099',
+        'http://localhost:80',
+        'http://127.0.0.1:80',
+    ]
+
+# Allow all origins in development (for Docker)
+if DEBUG or ALLOWED_HOSTS == ['*']:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -105,14 +122,15 @@ WSGI_APPLICATION = 'atbapi.wsgi.application'
 #     }
 # }
 
+# Database configuration - use environment variables or defaults
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'neondb',
-        'USER': 'neondb_owner',
-        'PASSWORD': 'npg_r9df3gCBRZos',
-        'HOST': 'ep-little-river-ah6ck3mc-pooler.c-3.us-east-1.aws.neon.tech',
-        'PORT': '5432',
+        'NAME': os.getenv('POSTGRES_DB', 'neondb'),
+        'USER': os.getenv('POSTGRES_USER', 'neondb_owner'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'npg_r9df3gCBRZos'),
+        'HOST': os.getenv('POSTGRES_HOST', 'ep-little-river-ah6ck3mc-pooler.c-3.us-east-1.aws.neon.tech'),
+        'PORT': os.getenv('POSTGRES_PORT', '5432'),
     }
 }
 

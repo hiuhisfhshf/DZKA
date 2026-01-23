@@ -29,3 +29,4 @@ export interface IUserUpdatePayload {
   image?: File | null;
 }
 
+

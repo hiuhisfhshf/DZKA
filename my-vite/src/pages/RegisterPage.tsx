@@ -1,5 +1,5 @@
 import { Button, Form, Input, Upload, message, Card } from "antd";
-import { InboxOutlined, UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, PictureOutlined } from '@ant-design/icons';
+import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined, PictureOutlined } from '@ant-design/icons';
 import type { IRegisterUser } from "../types/account/IRegisterUser.ts";
 import { registerUser } from "../services/api.ts";
 import { useState } from "react";
